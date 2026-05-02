@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HTML/CSS Playground</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0d0d0f;
+    --panel: #14141a;
+    --border: #2a2a38;
+    --accent: #00e5a0;
+    --accent2: #ff6b35;
+    --text: #e8e8f0;
+    --muted: #6b6b80;
+    --tab-active: #1e1e2e;
+  }
+
+  body {
+    font-family: 'JetBrains Mono', monospace;
+    background: var(--bg);
+    color: var(--text);
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* HEADER */
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 20px;
+    background: var(--panel);
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+
+  .logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.1rem;
+    letter-spacing: -0.5px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .logo-dot { color: var(--accent); }
+  .logo-sub { color: var(--muted); font-size: 0.7rem; font-weight: 400; font-family: 'JetBrains Mono'; }
+
+  .status {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.7rem;
+    color: var(--muted);
+  }
+
+  .status-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--accent);
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  /* TABS */
+  .tabs {
+    display: flex;
+    background: var(--panel);
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+
+  .tab {
+    padding: 8px 18px;
+    font-size: 0.72rem;
+    color: var(--muted);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    user-select: none;
+  }
+
+  .tab:hover { color: var(--text); }
+
+  .tab.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+    background: var(--tab-active);
+  }
+
+  .tab-icon { font-size: 0.9rem; }
+
+  /* MAIN */
+  .main {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+  }
+
+  /* EDITOR AREA */
+  .editor-area {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid var(--border);
+  }
+
+  .editor-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 14px;
+    background: var(--panel);
+    border-bottom: 1px solid var(--border);
+    font-size: 0.68rem;
+    color: var(--muted);
+  }
+
+  .btn-run {
+    background: var(--accent);
+    color: #000;
+    border: none;
+    padding: 4px 12px;
+    border-radius: 4px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+
+  .btn-run:hover { opacity: 0.85; }
+
+  .editor-panels {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    overflow: hidden;
+  }
+
+  .editor-section {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    overflow: hidden;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .editor-section:last-child { border-bottom: none; }
+
+  .editor-label {
+    padding: 5px 14px;
+    font-size: 0.65rem;
+    color: var(--muted);
+    background: #111118;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+
+  .label-html { color: var(--accent2); }
+  .label-css { color: #7b8cff; }
+
+  .code-editor {
+    flex: 1;
+    width: 100%;
+    background: var(--tab-active);
+    color: var(--text);
+    border: none;
+    outline: none;
+    resize: none;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    line-height: 1.6;
+    padding: 12px 16px;
+    tab-size: 2;
+  }
+
+  .code-editor::placeholder { color: var(--muted); }
+
+  /* PREVIEW */
+  .preview-area {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .preview-toolbar {
+    padding: 6px 14px;
+    background: var(--panel);
+    border-bottom: 1px solid var(--border);
+    font-size: 0.68rem;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .preview-dots {
+    display: flex;
+    gap: 5px;
+  }
+
+  .dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+  }
+  .dot-r { background: #ff5f57; }
+  .dot-y { background: #febc2e; }
+  .dot-g { background: #28c840; }
+
+  #preview {
+    flex: 1;
+    border: none;
+    background: white;
+  }
+
+  /* RESIZER */
+  .resizer {
+    width: 4px;
+    background: var(--border);
+    cursor: col-resize;
+    transition: background 0.2s;
+    flex-shrink: 0;
+  }
+
+  .resizer:hover { background: var(--accent); }
+
+  /* SHORTCUTS BAR */
+  .shortcut-bar {
+    background: var(--panel);
+    border-top: 1px solid var(--border);
+    padding: 6px 16px;
+    font-size: 0.63rem;
+    color: var(--muted);
+    display: flex;
+    gap: 20px;
+    flex-shrink: 0;
+  }
+
+  .shortcut-bar kbd {
+    background: var(--border);
+    border-radius: 3px;
+    padding: 1px 5px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--text);
+  }
+
+  /* Scrollbar styling */
+  textarea::-webkit-scrollbar { width: 5px; }
+  textarea::-webkit-scrollbar-track { background: transparent; }
+  textarea::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <span class="logo-dot">&lt;/&gt;</span>
+    HTML·CSS Playground
+    <span class="logo-sub">by C4rl0s</span>
+  </div>
+  <div class="status">
+    <div class="status-dot"></div>
+    Auto-actualización activa
+  </div>
+</header>
+
+<div class="tabs">
+  <div class="tab active"><span class="tab-icon">⚡</span> Editor</div>
+  <div class="tab" onclick="resetCode()"><span class="tab-icon">↺</span> Reiniciar</div>
+  <div class="tab" onclick="copyCode()"><span class="tab-icon">⎘</span> Copiar HTML</div>
+</div>
+
+<div class="main">
+
+  <div class="editor-area" id="editorArea">
+    <div class="editor-toolbar">
+      <span>Escribe tu código → la vista se actualiza sola</span>
+      <button class="btn-run" onclick="updatePreview()">▶ Ejecutar</button>
+    </div>
+    <div class="editor-panels">
+      <div class="editor-section">
+        <div class="editor-label">
+          <span class="label-html">●</span> HTML
+        </div>
+        <textarea class="code-editor" id="htmlEditor" placeholder="Escribe tu HTML aquí..." spellcheck="false"></textarea>
+      </div>
+      <div class="editor-section">
+        <div class="editor-label">
+          <span class="label-css">●</span> CSS
+        </div>
+        <textarea class="code-editor" id="cssEditor" placeholder="Escribe tu CSS aquí..." spellcheck="false"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <div class="resizer" id="resizer"></div>
+
+  <div class="preview-area" id="previewArea">
+    <div class="preview-toolbar">
+      <div class="preview-dots">
+        <div class="dot dot-r"></div>
+        <div class="dot dot-y"></div>
+        <div class="dot dot-g"></div>
+      </div>
+      <span>Vista previa en vivo</span>
+    </div>
+    <iframe id="preview"></iframe>
+  </div>
+
+</div>
+
+<div class="shortcut-bar">
+  <span><kbd>Tab</kbd> → indentar</span>
+  <span><kbd>Ctrl+A</kbd> → seleccionar todo</span>
+  <span>La vista se actualiza mientras escribes ⚡</span>
+</div>
+
+<script>
+  const htmlEditor = document.getElementById('htmlEditor');
+  const cssEditor  = document.getElementById('cssEditor');
+  const preview    = document.getElementById('preview');
+
+  const defaultHTML = `<h1>¡Hola mundo!</h1>
+<p>Esta es mi primera página web.</p>
+
+<h2>Mis hobbies</h2>
+<ul>
+  <li>Motos 🏍️</li>
+  <li>CNC y mecanizado</li>
+  <li>Ciberseguridad</li>
+</ul>
+
+<a href="#">Mi enlace</a>`;
+
+  const defaultCSS = `/* Cambia los estilos aquí */
+body {
+  background-color: #f0f4ff;
+  font-family: Arial, sans-serif;
+  padding: 30px;
+}
+
+h1 {
+  color: #2d00f7;
+  font-size: 2rem;
+}
+
+h2 {
+  color: #555;
+  margin-top: 20px;
+}
+
+p {
+  color: #333;
+  font-size: 1rem;
+}
+
+ul {
+  margin-top: 10px;
+  padding-left: 20px;
+}
+
+li {
+  color: #444;
+  margin-bottom: 6px;
+}
+
+a {
+  color: #e63946;
+  font-weight: bold;
+}`;
+
+  htmlEditor.value = defaultHTML;
+  cssEditor.value  = defaultCSS;
+
+  let timer;
+
+  function updatePreview() {
+    const html = htmlEditor.value;
+    const css  = cssEditor.value;
+    const doc  = `<!DOCTYPE html><html><head><style>${css}</style></head><body>${html}</body></html>`;
+    preview.srcdoc = doc;
+  }
+
+  function debounce(fn, delay) {
+    clearTimeout(timer);
+    timer = setTimeout(fn, delay);
+  }
+
+  htmlEditor.addEventListener('input', () => debounce(updatePreview, 300));
+  cssEditor.addEventListener('input',  () => debounce(updatePreview, 300));
+
+  // Tab key support
+  [htmlEditor, cssEditor].forEach(el => {
+    el.addEventListener('keydown', e => {
+      if (e.key === 'Tab') {
+        e.preventDefault();
+        const s = el.selectionStart;
+        el.value = el.value.substring(0, s) + '  ' + el.value.substring(el.selectionEnd);
+        el.selectionStart = el.selectionEnd = s + 2;
+        debounce(updatePreview, 300);
+      }
+    });
+  });
+
+  function resetCode() {
+    if (confirm('¿Reiniciar el código al ejemplo inicial?')) {
+      htmlEditor.value = defaultHTML;
+      cssEditor.value  = defaultCSS;
+      updatePreview();
+    }
+  }
+
+  function copyCode() {
+    navigator.clipboard.writeText(htmlEditor.value).then(() => {
+      alert('¡HTML copiado al portapapeles!');
+    });
+  }
+
+  // Resizer drag
+  const resizer    = document.getElementById('resizer');
+  const editorArea = document.getElementById('editorArea');
+  const previewArea= document.getElementById('previewArea');
+  let dragging = false;
+
+  resizer.addEventListener('mousedown', () => { dragging = true; });
+  document.addEventListener('mousemove', e => {
+    if (!dragging) return;
+    const total = document.querySelector('.main').offsetWidth;
+    const pct   = (e.clientX / total) * 100;
+    if (pct > 20 && pct < 80) {
+      editorArea.style.width  = pct + '%';
+      previewArea.style.width = (100 - pct) + '%';
+    }
+  });
+  document.addEventListener('mouseup', () => { dragging = false; });
+
+  updatePreview();
+</script>
+</body>
+</html>
